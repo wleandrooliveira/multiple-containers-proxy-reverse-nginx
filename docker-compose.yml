@@ -1,0 +1,98 @@
+version: "3.8"
+
+services:
+  nginx:
+    image: nginx:1.25.1-alpine-slim
+    container_name: dewtech-nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx:/etc/nginx/conf.d
+      - ./applications:/var/www/html/
+    networks:
+      default:
+        aliases:
+          - auth.local
+          - elastic.local
+    depends_on:
+      - php-v8.2
+
+  php-v8.2:
+    build:
+      context: ./
+      dockerfile: docker/php-v8.2/DockerFile
+    container_name: dewtech-app
+    restart: always
+    volumes:
+      - ./applications:/var/www/html/
+    environment:
+      - COMPOSER_HOME=/composer
+      - COMPOSER_ALLOW_SUPERUSER=1
+    depends_on:
+      - db
+      - redis
+      - elasticsearch
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+  redis:
+    build:
+      context: ./
+      dockerfile: docker/redis/DockerFile
+    container_name: dewtech-redis
+    restart: always
+    command: redis-server --requirepass "Docker@6379"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/data
+  db:
+    build:
+      context: ./
+      dockerfile: docker/db/DockerFile
+    container_name: dewtech-db
+    restart: always
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1
+    container_name: dewtech-elastic
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - ./docker/elasticsearch-data:/usr/share/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.15.2
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+
+volumes:
+  redis:
+  db:
+  elasticsearch-data:
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 10.0.0.0/24

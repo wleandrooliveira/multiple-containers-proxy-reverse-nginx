@@ -1,0 +1,95 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Documentação API Upload e indexação de arquivo no ElasticSearch",
+        "description": "API Upload e indexação de arquivo no ElasticSearch",
+        "contact": {
+            "name": "Dewtech",
+            "url": "https://www.dewtech.io",
+            "email": "wanderson@dewtech.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/upload": {
+            "post": {
+                "summary": "Envio de arquivo para o Elasticsearch",
+                "operationId": "b4116c9c1cbcf1030ec056ee6176a3dc",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "file": {
+                                        "description": "Arquivo a ser enviado",
+                                        "type": "file"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Arquivo enviado com sucesso"
+                    },
+                    "500": {
+                        "description": "Falha no envio do arquivo"
+                    }
+                }
+            }
+        },
+        "/api/search": {
+            "get": {
+                "summary": "Pesquisar arquivos no Elasticsearch",
+                "operationId": "d2244b34ff91d78471c33784a8e8fe33",
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "description": "Termo de pesquisa",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resultados da pesquisa",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "file_name": {
+                                                "type": "string"
+                                            },
+                                            "file_content": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Requisição inválida"
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor"
+                    }
+                }
+            }
+        }
+    }
+}

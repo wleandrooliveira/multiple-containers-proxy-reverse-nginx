@@ -1,0 +1,894 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Documentação API Dewtech",
+        "description": "API de cadastramento de usuários e Autênticação",
+        "contact": {
+            "name": "Dewtech",
+            "url": "https://www.dewtech.io",
+            "email": "wanderson@dewtech.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/v1/dewtech/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Autenticação de usuário",
+                "description": "Login para obter o token de acesso",
+                "operationId": "login",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "description": "User email",
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "description": "User password",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "email": "user@example.com",
+                                    "password": "password1234"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Autenticado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "access_token": {
+                                            "type": "string",
+                                            "example": "abcd1234"
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "Bearer"
+                                        },
+                                        "expires_at": {
+                                            "type": "string",
+                                            "example": "2023-08-12 12:34:56"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    }
+                }
+            }
+        },
+        "/v1/dewtech/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Invalidar token de acesso",
+                "description": "Efetuar logout e invalida o token de acesso",
+                "operationId": "logout",
+                "responses": {
+                    "200": {
+                        "description": "Logout realizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    }
+                },
+                "security": [
+                    {
+                        "jwtAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/dewtech/refreshtoken": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Refresh token",
+                "description": "Renova token de acesso",
+                "operationId": "refreshtoken",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "token": {
+                                        "description": "Bearer Token",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "token": "Bearer abcd1234"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update token com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "jwtAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/dewtech/validateToken": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "validate Token",
+                "description": "Valida token de acesso",
+                "operationId": "validateToken",
+                "responses": {
+                    "200": {
+                        "description": "Valida token com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "jwtAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/dewtech/update-password": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Atualizar senha",
+                "description": "Atualizar a senha do usuário logado",
+                "operationId": "updatePassword",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "current_password": {
+                                        "description": "Current password",
+                                        "type": "string"
+                                    },
+                                    "new_password": {
+                                        "description": "New password",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "current_password": "oldPass123",
+                                    "new_password": "newPass1234"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Senha atualizada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    }
+                },
+                "security": [
+                    {
+                        "jwtAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/dewtech/reset-password": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Solicita redefinição de senha",
+                "description": "Envia um e-mail com um link para redefinir a senha",
+                "operationId": "resetPasswordRequest",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "description": "User email",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "email": "user@example.com"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Email enviado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Email não encontrado"
+                    }
+                }
+            }
+        },
+        "/v1/dewtech/reset-password-token": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Reset user password with a token",
+                "description": "This endpoint resets the user's password using a password reset token.",
+                "operationId": "25a5d4c4db2e4fbcb126006c8f4682ca",
+                "requestBody": {
+                    "description": "Reset Password Token Information",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ResetPasswordTokenRequestDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password reset successful"
+                    },
+                    "400": {
+                        "description": "Bad request, invalid input data"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            }
+        },
+        "/v1/dewtech/redis": {
+            "post": {
+                "tags": [
+                    "Redis"
+                ],
+                "summary": "Envia dados para o Redis",
+                "description": "Envia dados para o Redi.",
+                "operationId": "efe0f6f833bc1c49643a83f94e9e8fe0",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Dados enviado para o Redis com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "uuid": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/dewtech/redis/{id}": {
+            "get": {
+                "tags": [
+                    "Redis"
+                ],
+                "summary": "Busca dados no Redis",
+                "description": "Busca informações no Redis pela key.",
+                "operationId": "45c6516cf3b3a511ce32187d60355565",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Chave de registro no Redis",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operação realizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "email": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Registro não encontrado"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Redis"
+                ],
+                "summary": "Excluir registro no Redis",
+                "description": "Excluir registro no Redis pela key do redis.",
+                "operationId": "340787244112612c50ab9a2ab13f7b83",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Chave de registro no Redis",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Registro Excluído com sucesso"
+                    },
+                    "404": {
+                        "description": "Registro não encontrado"
+                    },
+                    "500": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/dewtech/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Lista usuários",
+                "description": "Retorna uma lista de usuários.",
+                "operationId": "f01a417fd54b0b89dc27533a6d24f9b2",
+                "responses": {
+                    "200": {
+                        "description": "Operação realizada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/UserRequestsDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Cadastra usuário",
+                "description": "Cadastramento de usuário.",
+                "operationId": "2422bb06ef64c371379484c4f4617480",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "remember_token": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Usuário criado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "email": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/dewtech/users/{id}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Busca usuário pelo ID",
+                "description": "Busca informações do usuário pelo Id.",
+                "operationId": "3fd2b75aee594c8be7f897cb8fd501fb",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operação realizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "email": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Atualização de usuário",
+                "description": "Atualização de usuário com sucesso.",
+                "operationId": "ffa181e2dc0be63d6d00b09e0cdd1ba3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "remember_token": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Usuário atualizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "email": {
+                                            "type": "string"
+                                        },
+                                        "password": {
+                                            "type": "string"
+                                        },
+                                        "remember_token": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado"
+                    },
+                    "500": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Excluir um usuário",
+                "description": "Excluir um usuário pelo UserId.",
+                "operationId": "009f43dc3a1f342dbb9fbd4417abab0d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuário excluído com sucesso"
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado"
+                    },
+                    "500": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "LoginRequestDto": {
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "email": {
+                        "description": "User email",
+                        "type": "string"
+                    },
+                    "password": {
+                        "description": "User password",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "RefreshTokenRequestDto": {
+                "required": [
+                    "refresh_token"
+                ],
+                "properties": {
+                    "token": {
+                        "description": "Bearer token",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "RedisRequestDto": {
+                "required": [
+                    "name",
+                    "email"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "User name",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "User email",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "ResetPasswordRequestDto": {
+                "required": [
+                    "email"
+                ],
+                "properties": {
+                    "email": {
+                        "description": "User's email address",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "ResetPasswordTokenRequestDto": {
+                "required": [
+                    "email",
+                    "token",
+                    "password"
+                ],
+                "properties": {
+                    "email": {
+                        "description": "Endereço de email do usuário",
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "token": {
+                        "description": "Token de redefinição de senha",
+                        "type": "string"
+                    },
+                    "password": {
+                        "description": "Nova senha do usuário",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdatePasswordRequestDto": {
+                "required": [
+                    "current_password",
+                    "new_password"
+                ],
+                "properties": {
+                    "current_password": {
+                        "description": "User's current password",
+                        "type": "string"
+                    },
+                    "new_password": {
+                        "description": "User's new password",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "UserRequestsDto": {
+                "required": [
+                    "name",
+                    "email",
+                    "password",
+                    "remember_token"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "User name",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "User email",
+                        "type": "string"
+                    },
+                    "password": {
+                        "description": "User password",
+                        "type": "string"
+                    },
+                    "remember_token": {
+                        "description": "User remember token",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Error": {
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Error message."
+                    },
+                    "status": {
+                        "type": "boolean",
+                        "example": false
+                    }
+                },
+                "type": "object"
+            },
+            "SuccessResponse": {
+                "properties": {
+                    "status": {
+                        "type": "boolean",
+                        "example": "true"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success message."
+                    },
+                    "code": {
+                        "type": "int64",
+                        "example": 200
+                    }
+                },
+                "type": "object"
+            },
+            "TokenRefresh": {
+                "properties": {
+                    "status": {
+                        "type": "boolean",
+                        "example": "true"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success message."
+                    },
+                    "code": {
+                        "type": "int64",
+                        "example": 200
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "jwtAuth": {
+                "type": "apiKey",
+                "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    }
+}

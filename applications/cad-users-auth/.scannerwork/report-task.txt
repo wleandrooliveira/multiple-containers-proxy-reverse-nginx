@@ -1,0 +1,6 @@
+projectKey=api-auth-cad-users
+serverUrl=http://127.0.0.1:9000
+serverVersion=10.2.1.78527
+dashboardUrl=http://127.0.0.1:9000/dashboard?id=api-auth-cad-users
+ceTaskId=AYucpUSWe-Vl4xgXSLzo
+ceTaskUrl=http://127.0.0.1:9000/api/ce/task?id=AYucpUSWe-Vl4xgXSLzo
